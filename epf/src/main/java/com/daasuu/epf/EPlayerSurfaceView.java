@@ -13,9 +13,9 @@ import com.google.android.exoplayer2.video.VideoListener;
 /**
  * Created by sudamasayuki on 2017/05/16.
  */
-public class EPlayerView extends GLSurfaceView implements VideoListener {
+public class EPlayerSurfaceView extends GLSurfaceView implements VideoListener, IPlayerView {
 
-    private final static String TAG = EPlayerView.class.getSimpleName();
+    private final static String TAG = EPlayerSurfaceView.class.getSimpleName();
 
     private final EPlayerRenderer renderer;
     private SimpleExoPlayer player;
@@ -23,11 +23,11 @@ public class EPlayerView extends GLSurfaceView implements VideoListener {
     private float videoAspect = 1f;
     private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_WIDTH;
 
-    public EPlayerView(Context context) {
+    public EPlayerSurfaceView(Context context) {
         this(context, null);
     }
 
-    public EPlayerView(Context context, AttributeSet attrs) {
+    public EPlayerSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         setEGLContextFactory(new EContextFactory());
@@ -38,13 +38,15 @@ public class EPlayerView extends GLSurfaceView implements VideoListener {
 
     }
 
-    public EPlayerView setSimpleExoPlayer(SimpleExoPlayer player) {
+    public EPlayerSurfaceView setSimpleExoPlayer(SimpleExoPlayer player) {
         if (this.player != null) {
             this.player.release();
             this.player = null;
         }
         this.player = player;
-        this.player.addVideoListener(this);
+        if (this.player != null) {
+            this.player.addVideoListener(this);
+        }
         this.renderer.setSimpleExoPlayer(player);
         return this;
     }

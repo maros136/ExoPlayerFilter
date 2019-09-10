@@ -45,13 +45,13 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
 
     private GlFilter glFilter;
     private boolean isNewFilter;
-    private final EPlayerView glPreview;
+    private final IPlayerView glPreview;
 
     private float aspectRatio = 1f;
 
     private SimpleExoPlayer simpleExoPlayer;
 
-    EPlayerRenderer(EPlayerView glPreview) {
+    EPlayerRenderer(IPlayerView glPreview) {
         super();
         Matrix.setIdentityM(STMatrix, 0);
         this.glPreview = glPreview;
