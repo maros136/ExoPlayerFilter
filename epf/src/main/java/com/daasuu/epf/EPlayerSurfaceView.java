@@ -4,24 +4,17 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 
-import com.daasuu.epf.chooser.EConfigChooser;
-import com.daasuu.epf.contextfactory.EContextFactory;
 import com.daasuu.epf.filter.GlFilter;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.video.VideoListener;
 
 /**
  * Created by sudamasayuki on 2017/05/16.
  */
-public class EPlayerSurfaceView extends GLSurfaceView implements VideoListener, IPlayerView {
+public class EPlayerSurfaceView extends GLSurfaceView implements IPlayerView {
 
     private final static String TAG = EPlayerSurfaceView.class.getSimpleName();
 
-    private final EPlayerRenderer renderer;
-    private SimpleExoPlayer player;
-
-    private float videoAspect = 1f;
-    private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_WIDTH;
+    private final EPlayerDelegate playerDelegate;
 
     public EPlayerSurfaceView(Context context) {
         this(context, null);
@@ -29,66 +22,31 @@ public class EPlayerSurfaceView extends GLSurfaceView implements VideoListener, 
 
     public EPlayerSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-
-        setEGLContextFactory(new EContextFactory());
-        setEGLConfigChooser(new EConfigChooser());
-
-        renderer = new EPlayerRenderer(this);
-        setRenderer(renderer);
-
+        playerDelegate = new EPlayerDelegate(this);
     }
 
     public EPlayerSurfaceView setSimpleExoPlayer(SimpleExoPlayer player) {
-        if (this.player != null) {
-            this.player.release();
-            this.player = null;
-        }
-        this.player = player;
-        if (this.player != null) {
-            this.player.addVideoListener(this);
-        }
-        this.renderer.setSimpleExoPlayer(player);
+        playerDelegate.setSimpleExoPlayer(player);
         return this;
     }
 
     public void setGlFilter(GlFilter glFilter) {
-        renderer.setGlFilter(glFilter);
+        playerDelegate.setGlFilter(glFilter);
     }
 
     public void setPlayerScaleType(PlayerScaleType playerScaleType) {
-        this.playerScaleType = playerScaleType;
-        requestLayout();
+        playerDelegate.setPlayerScaleType(playerScaleType);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-        int measuredWidth = getMeasuredWidth();
-        int measuredHeight = getMeasuredHeight();
-
-        int viewWidth = measuredWidth;
-        int viewHeight = measuredHeight;
-
-        switch (playerScaleType) {
-            case RESIZE_FIT_WIDTH:
-                viewHeight = (int) (measuredWidth / videoAspect);
-                break;
-            case RESIZE_FIT_HEIGHT:
-                viewWidth = (int) (measuredHeight * videoAspect);
-                break;
-        }
-
-        // Log.d(TAG, "onMeasure viewWidth = " + viewWidth + " viewHeight = " + viewHeight);
-
-        setMeasuredDimension(viewWidth, viewHeight);
-
+        playerDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        renderer.release();
+    public void setMeasuredDimensionImpl(int viewWidth, int viewHeight) {
+        setMeasuredDimension(viewWidth, viewHeight);
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -96,14 +54,20 @@ public class EPlayerSurfaceView extends GLSurfaceView implements VideoListener, 
 
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
-        // Log.d(TAG, "width = " + width + " height = " + height + " unappliedRotationDegrees = " + unappliedRotationDegrees + " pixelWidthHeightRatio = " + pixelWidthHeightRatio);
-        videoAspect = ((float) width / height) * pixelWidthHeightRatio;
-        // Log.d(TAG, "videoAspect = " + videoAspect);
-        requestLayout();
+       playerDelegate.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
     }
 
     @Override
     public void onRenderedFirstFrame() {
         // do nothing
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    //Render Releasing
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        playerDelegate.rendererRelease();
     }
 }

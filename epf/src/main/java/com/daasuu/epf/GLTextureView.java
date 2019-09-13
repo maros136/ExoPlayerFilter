@@ -192,6 +192,7 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
                 }
 
 /*
+            //TODO: https://medium.com/rosberryapps/make-your-custom-view-60fps-in-android-4587bbffa557
                 try {
                     float framerate = 55f;
                     Thread.sleep((long) (1000 / framerate));
@@ -358,6 +359,10 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
      */
     synchronized public void queueEvent(Runnable event) {
         mEventQueue.add(event);
+    }
+
+    public void requestRender() {
+        postInvalidate();//TODO: valid?
     }
 
     /**
