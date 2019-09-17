@@ -1,6 +1,7 @@
 package com.daasuu.epf;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLUtils;
@@ -164,6 +165,13 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
         private int height = getHeight();
         private volatile boolean sizeChanged = true;
 
+        private Object lock = new Object();
+        private long previousTime;
+        private float fps = 60f;
+        private long currentTimeMillis;
+        private long elapsedTimeMs;
+        private long sleepTimeMs;
+
         GLThread(SurfaceTexture surface) {
             this.surface = surface;
         }
@@ -173,23 +181,55 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
             initGL();
             GL10 gl10 = (GL10) gl;
             renderer.onSurfaceCreated(gl10, eglConfig);
+
             while (!finished) {
-                checkCurrent();
-                if (sizeChanged) {
-                    createSurface();
-                    renderer.onSurfaceChanged(gl10, width, height);
-                    sizeChanged = false;
-                }
 
-                if (!mEventQueue.isEmpty()) {
-                    Runnable event = mEventQueue.remove(0);
-                    event.run();
-                }
+                currentTimeMillis = System.currentTimeMillis();
+                elapsedTimeMs = currentTimeMillis - previousTime;
+                sleepTimeMs = (long) (1000f/ fps - elapsedTimeMs);
 
-                renderer.onDrawFrame(gl10);
-                if (!egl.eglSwapBuffers(eglDisplay, eglSurface)) {
-                    throw new RuntimeException("Cannot swap buffers");
-                }
+                Canvas canvas = null;
+                try {
+
+                    checkCurrent();
+                    if (sizeChanged) {
+                        createSurface();
+                        renderer.onSurfaceChanged(gl10, width, height);
+                        sizeChanged = false;
+                    }
+
+                    if (!mEventQueue.isEmpty()) {
+                        Runnable event = mEventQueue.remove(0);
+                        event.run();
+                    }
+
+                    //canvas = lockCanvas();
+
+                    //if (canvas == null){
+                    //    Thread.sleep(1);
+                        //continue;
+                    //} else if (sleepTimeMs > 0)
+                    {
+                        Thread.sleep(77);
+                    }
+
+                    {
+                        synchronized(lock) {
+                            renderer.onDrawFrame(gl10);
+                            if (!egl.eglSwapBuffers(eglDisplay, eglSurface)) {
+                                throw new RuntimeException("Cannot swap buffers");
+                            }
+                        }
+                    }
+
+                    } catch (Exception e) {
+                        Log.e("", e.toString());
+                    } finally {
+                        //if (canvas != null) {
+                        //    unlockCanvasAndPost(canvas);
+                            previousTime = System.currentTimeMillis();
+                        //}
+                    }
 
 /*
             //TODO: https://medium.com/rosberryapps/make-your-custom-view-60fps-in-android-4587bbffa557
@@ -201,6 +241,7 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
                 }
 */
             }
+
             finishGL();
         }
 
@@ -284,11 +325,9 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
 
         private void checkCurrent() {
             if (!eglContext.equals(egl.eglGetCurrentContext())
-                    || !eglSurface.equals(egl
-                    .eglGetCurrentSurface(EGL10.EGL_DRAW))) {
+                    || !eglSurface.equals(egl.eglGetCurrentSurface(EGL10.EGL_DRAW))) {
                 checkEglError();
-                if (!egl.eglMakeCurrent(eglDisplay, eglSurface,
-                        eglSurface, eglContext)) {
+                if (!egl.eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext)) {
                     throw new RuntimeException(
                             "eglMakeCurrent failed "
                                     + GLUtils.getEGLErrorString(egl
@@ -362,7 +401,7 @@ public class GLTextureView extends TextureView implements TextureView.SurfaceTex
     }
 
     public void requestRender() {
-        postInvalidate();//TODO: valid?
+        //postInvalidate();//TODO: valid?
     }
 
     /**
