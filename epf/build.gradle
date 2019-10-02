@@ -17,6 +17,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility rootProject.ext.javaSource
+        targetCompatibility rootProject.ext.javaTarget
+    }
+
     lintOptions {
         abortOnError false
     }

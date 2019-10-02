@@ -3,6 +3,8 @@ package com.daasuu.epf;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
@@ -99,8 +101,7 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
         previewFilter = new GlPreviewFilter(previewTexture.getTextureTarget());
         previewFilter.setup();
 
-        Surface surface = new Surface(previewTexture.getSurfaceTexture());
-        this.simpleExoPlayer.setVideoSurface(surface);
+        final Surface surface = new Surface(previewTexture.getSurfaceTexture());
 
         Matrix.setLookAtM(VMatrix, 0,
                 0.0f, 0.0f, 5.0f,
@@ -118,6 +119,8 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
 
         GLES20.glGetIntegerv(GL_MAX_TEXTURE_SIZE, args, 0);
 
+        //TODO: main thread
+        new Handler(Looper.getMainLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
     }
 
     @Override
