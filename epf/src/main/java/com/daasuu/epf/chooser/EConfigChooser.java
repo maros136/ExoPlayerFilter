@@ -1,5 +1,6 @@
 package com.daasuu.epf.chooser;
 
+import android.annotation.SuppressLint;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 
@@ -32,6 +33,7 @@ public class EConfigChooser implements GLSurfaceView.EGLConfigChooser {
 
     private static final int EGL_CONTEXT_CLIENT_VERSION = 2;
 
+    @SuppressLint("ObsoleteSdkInt")
     private static final boolean USE_RGB_888 = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
 
     public EConfigChooser() {

@@ -4,7 +4,6 @@ import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.Surface;
 
@@ -120,7 +119,7 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
         GLES20.glGetIntegerv(GL_MAX_TEXTURE_SIZE, args, 0);
 
         //TODO: main thread
-        new Handler(Looper.getMainLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
+        new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
     }
 
     @Override

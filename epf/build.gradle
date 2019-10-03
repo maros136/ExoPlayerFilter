@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion rootProject.ext.targetVersion
@@ -21,6 +22,10 @@ android {
     compileOptions {
         sourceCompatibility rootProject.ext.javaSource
         targetCompatibility rootProject.ext.javaTarget
+    }
+
+    kotlinOptions {
+        jvmTarget = rootProject.ext.javaTarget
     }
 
     lintOptions {
