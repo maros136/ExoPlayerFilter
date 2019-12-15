@@ -51,6 +51,7 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
     private float aspectRatio = 1f;
 
     private SimpleExoPlayer simpleExoPlayer;
+    private Surface surface;
 
     EPlayerRenderer(IPlayerView glPreview) {
         super();
@@ -100,7 +101,7 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
         previewFilter = new GlPreviewFilter(previewTexture.getTextureTarget());
         previewFilter.setup();
 
-        final Surface surface = new Surface(previewTexture.getSurfaceTexture());
+        surface = new Surface(previewTexture.getSurfaceTexture());
 
         Matrix.setLookAtM(VMatrix, 0,
                 0.0f, 0.0f, 5.0f,
@@ -119,7 +120,7 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
         GLES20.glGetIntegerv(GL_MAX_TEXTURE_SIZE, args, 0);
 
         //TODO: main thread
-        new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
+        setupVideoSurface();
     }
 
     @Override
@@ -182,6 +183,13 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
 
     void setSimpleExoPlayer(SimpleExoPlayer simpleExoPlayer) {
         this.simpleExoPlayer = simpleExoPlayer;
+        setupVideoSurface();
+    }
+
+    private void setupVideoSurface() {
+        if (simpleExoPlayer != null && surface != null) {
+            new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
+        }
     }
 
     void release() {
