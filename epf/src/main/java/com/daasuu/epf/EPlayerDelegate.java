@@ -13,7 +13,7 @@ class EPlayerDelegate {
     private SimpleExoPlayer player;
 
     private float videoAspect = 1f;
-    private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_WIDTH;
+    private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_HEIGHT;
 
     EPlayerDelegate(IPlayerView playerView) {
         this.playerView = playerView;
