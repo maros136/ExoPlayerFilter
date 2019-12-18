@@ -52,6 +52,12 @@ public class EPlayerSurfaceView extends GLSurfaceView implements IPlayerView {
     //////////////////////////////////////////////////////////////////////////
     // SimpleExoPlayer.VideoListener
 
+    //TODO: Should work without overriding, but probably no compiled as Java 8 target
+    @Override
+    public void onSurfaceSizeChanged(int width, int height) {
+        //super.onSurfaceSizeChanged(width, height);
+    }
+
     @Override
     public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
        playerDelegate.onVideoSizeChanged(width, height, unappliedRotationDegrees, pixelWidthHeightRatio);
