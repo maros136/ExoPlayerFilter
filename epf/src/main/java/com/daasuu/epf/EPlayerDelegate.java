@@ -25,7 +25,8 @@ class EPlayerDelegate {
 
     void setSimpleExoPlayer(SimpleExoPlayer player) {
         if (this.player != null) {
-            this.player.release();
+            //Why release??? this.player.release();
+            this.player.removeVideoListener(playerView);
             this.player = null;
         }
         this.player = player;

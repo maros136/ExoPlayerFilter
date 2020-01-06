@@ -188,7 +188,11 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
 
     private void setupVideoSurface() {
         if (simpleExoPlayer != null && surface != null) {
-            new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> simpleExoPlayer.setVideoSurface(surface),1);
+            new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> {
+                if (simpleExoPlayer != null && surface != null) {
+                    simpleExoPlayer.setVideoSurface(surface);
+                }
+            },1);
         }
     }
 
