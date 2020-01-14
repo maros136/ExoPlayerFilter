@@ -14,6 +14,7 @@ class EPlayerDelegate {
 
     private float videoAspect = 1f;
     private PlayerScaleType playerScaleType = PlayerScaleType.RESIZE_FIT_HEIGHT;
+    private boolean mIsRotated = false;
 
     EPlayerDelegate(IPlayerView playerView) {
         this.playerView = playerView;
@@ -45,6 +46,10 @@ class EPlayerDelegate {
         playerView.requestLayout();
     }
 
+    public void setRotated(boolean isRotated) {
+        mIsRotated = isRotated;
+    }
+
     void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int measuredWidth = playerView.getMeasuredWidth();
         int measuredHeight = playerView.getMeasuredHeight();
@@ -69,6 +74,11 @@ class EPlayerDelegate {
     void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
         // Log.d(TAG, "width = " + width + " height = " + height + " unappliedRotationDegrees = " + unappliedRotationDegrees + " pixelWidthHeightRatio = " + pixelWidthHeightRatio);
         videoAspect = ((float) width / height) * pixelWidthHeightRatio;
+
+        if (mIsRotated) {
+            videoAspect = 1.0f / videoAspect;
+        }
+
         // Log.d(TAG, "videoAspect = " + videoAspect);
         playerView.requestLayout();
     }

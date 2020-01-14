@@ -14,6 +14,7 @@ public interface IPlayerView extends VideoListener {
     void setGlFilter(GlFilter glFilter);
     IPlayerView setSimpleExoPlayer(SimpleExoPlayer player);
     void setPlayerScaleType(PlayerScaleType playerScaleType);
+    void setRotated(boolean isRotated);
 
     //GL
     void setRenderer(GLSurfaceView.Renderer renderer);

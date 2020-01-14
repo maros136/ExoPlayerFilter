@@ -36,6 +36,11 @@ public class EPlayerTextureView extends GLTextureView implements IPlayerView {
     }
 
     @Override
+    public void setRotated(boolean isRotated) {
+        playerDelegate.setRotated(isRotated);
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         playerDelegate.onMeasure(widthMeasureSpec, heightMeasureSpec);
