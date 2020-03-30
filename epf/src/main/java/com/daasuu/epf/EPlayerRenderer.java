@@ -3,7 +3,6 @@ package com.daasuu.epf;
 import android.graphics.SurfaceTexture;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Surface;
 
@@ -187,12 +186,17 @@ class EPlayerRenderer extends EFrameBufferObjectRenderer implements SurfaceTextu
     }
 
     private void setupVideoSurface() {
-        if (simpleExoPlayer != null && surface != null) {
-            new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> {
-                if (simpleExoPlayer != null && surface != null) {
-                    simpleExoPlayer.setVideoSurface(surface);
-                }
-            },1);
+        //TODO: remove - because cause -> ExoPlayerImplInternal: Internal runtime error
+//        if (simpleExoPlayer != null && surface != null) {
+//            new Handler(simpleExoPlayer.getApplicationLooper()).postDelayed(() -> {
+//                if (simpleExoPlayer != null && surface != null) {
+//                    simpleExoPlayer.setVideoSurface(surface);
+//                }
+//            },1);
+//        }
+
+        if (simpleExoPlayer != null) {
+            simpleExoPlayer.setVideoSurface(surface);
         }
     }
 
